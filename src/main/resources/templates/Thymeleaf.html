@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Management System</title>
+    <style>
+        body {
+            background-color: #c0e4b6; /* Green background color */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #004d00; /* Dark green text color */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #004d00; /* Dark green border */
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #80bfff; /* Light blue header background color */
+            color: #004d00; /* Dark green header text color */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2; /* Light gray background color for even rows */
+        }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50; /* Green submit button */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            float: right;
+        }
+
+        .data-table {
+            margin-top: 20px;
+        }
+
+        .success-msg {
+            text-align: center;
+            margin-top: 20px;
+            background-color: #dff0d8; /* Light green background color */
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Farm Records Management System</h1>
+
+<!-- Animals Table -->
+<h2>Animal Records</h2>
+<form id="animalForm" action="http://localhost:8080/api/v1/animals/save" method="post" onsubmit="submitForm(event, 'animalForm', 'http://localhost:8080/api/v1/animals/save', 'animalTable', 'animalDataTable')">
+    <input type="text" id="AnimalsSearch" onkeyup="searchTable('animalTable', 'AnimalsSearch')" placeholder="Search for Animal...">
+
+    <table id="animalTable">
+        <tr>
+            <th>Identification</th>
+            <th>Animal Sex</th>
+            <th>Birthday Date</th>
+            <th>Family No</th>
+            <th>Insemination Date</th>
+            <th>Breed</th>
+            <th>Health</th>
+            <th>Feeding</th>
+            <th>Production</th>
+            <th>Movements</th>
+            <th>Behavior</th>
+            <th>Date</th>
+        </tr>
+        <tr>
+            <td><input type="text" name="animalIdentification"></td>
+            <td><input type="text" name="animalSex"></td>
+            <td><input type="date" name="birthdayDate"></td>
+            <td><input type="text" name="familyNo"></td>
+            <td><input type="date" name="inseminationDate"></td>
+            <td><input type="text" name="animalBreeding"></td>
+            <td><input type="text" name="animalHealth"></td>
+            <td><input type="text" name="animalFeeding"></td>
+            <td><input type="text" name="animalProduction"></td>
+            <td><input type="text" name="animalMovements"></td>
+            <td><input type="text" name="animalBehavior"></td>
+            <td><input type="date" name="animalDate"></td>
+        </tr>
+    </table>
+    <button type="button" onclick="addRow('animalTable')">Add Row</button>
+    <button type="submit" class="submit-btn">Submit</button>
+    <button type="button" onclick="viewRecords('http://localhost:8080/api/v1/animals/all', 'animalDataTable')">View My Records</button>
+</form>
+<div id="animalDataTable" class="data-table"></div>
+
+<!-- Crops Table -->
+<h2>Crop Records</h2>
+<form id="cropForm" action="/api/v1/crops/save" method="post" onsubmit="submitForm(event, 'cropForm', '/api/v1/crops/save', 'cropTable', 'cropDataTable')">
+    <input type="text" id="CropsSearch" onkeyup="searchTable('cropTable', 'CropsSearch')" placeholder="Search for Crops...">
+
+    <table id="cropTable">
+        <tr>
+            <th>Variety</th>
+            <th>Planting Date</th>
+            <th>Harvesting Date</th>
+            <th>Field Location</th>
+            <th>Inputs</th>
+            <th>Monitoring</th>
+            <th>Harvest</th>
+            <th>Yield</th>
+            <th>Weather Conditions</th>
+            <th>Date</th>
+        </tr>
+        <tr>
+            <td><input type="text" name="cropVariety"></td>
+            <td><input type="date" name="plantingDate"></td>
+            <td><input type="date" name="harvestingDate"></td>
+            <td><input type="text" name="cropFieldLocation"></td>
+            <td><input type="text" name="cropInputs"></td>
+            <td><input type="text" name="cropMonitoring"></td>
+            <td><input type="text" name="cropHarvest"></td>
+            <td><input type="text" name="cropYield"></td>
+            <td><input type="text" name="cropWeatherConditions"></td>
+            <td><input type="date" name="cropDate"></td>
+        </tr>
+    </table>
+    <button type="button" onclick="addRow('cropTable')">Add Row</button>
+    <button type="submit" class="submit-btn">Submit</button>
+    <button type="button" onclick="viewRecords('/api/v1/crops', 'cropDataTable')">View My Records</button>
+</form>
+<div id="cropDataTable" class="data-table"></div>
+
+<!-- Inventory Table -->
+<h2>Inventory Records</h2>
+<form id="inventoryForm" action="/api/v1/inventory/save" method="post" onsubmit="submitForm(event, 'inventoryForm', '/api/v1/inventory/save', 'inventoryTable', 'inventoryDataTable')">
+    <input type="text" id="InventorySearch" onkeyup="searchTable('inventoryTable', 'InventorySearch')" placeholder="Search for Inventory...">
+
+    <table id="inventoryTable">
+        <tr>
+            <th>Item Description</th>
+            <th>Quantity</th>
+            <th>Unit Cost</th>
+            <th>Supplier</th>
+            <th>Usage</th>
+            <th>Reordering Point</th>
+            <th>Inventory Value</th>
+            <th>Purchased Date</th>
+            <th>Date</th>
+        </tr>
+        <tr>
+            <td><input type="text" name="itemDescription"></td>
+            <td><input type="number" name="itemQuantity"></td>
+            <td><input type="number" name="itemUnitCost"></td>
+            <td><input type="text" name="itemSupplier"></td>
+            <td><input type="text" name="itemUsage"></td>
+            <td><input type="number" name="itemReorderingPoint"></td>
+            <td><input type="number" name="itemInventoryValue"></td>
+            <td><input type="date" name="purchasedDate"></td>
+            <td><input type="date" name="itemDate"></td>
+        </tr>
+    </table>
+    <button type="button" onclick="addRow('inventoryTable')">Add Row</button>
+    <button type="submit" class="submit-btn">Submit</button>
+    <button type="button" onclick="viewRecords('/api/v1/inventory', 'inventoryDataTable')">View My Records</button>
+</form>
+<div id="inventoryDataTable" class="data-table"></div>
+
+<!-- JavaScript to handle form submission, view records, and display data -->
+<script>
+    function addRow(tableId) {
+        var table = document.getElementById(tableId);
+        var newRow = table.insertRow(table.rows.length);
+        var cellCount = table.rows[0].cells.length;
+        for (var i = 0; i < cellCount; i++) {
+            var newCell = newRow.insertCell(i);
+            var input = document.createElement("input");
+            input.type = "text";
+            input.name = tableId.replace("Table", "") + "[]";
+            newCell.appendChild(input);
+        }
+    }
+
+    function submitForm(event, formId, endpoint, tableId, dataTableId) {
+        event.preventDefault();
+        var formData = new FormData(document.getElementById(formId));
+
+        // Convert formData to JSON
+        var jsonObject = {};
+        formData.forEach(function(value, key){
+            jsonObject[key] = value;
+        });
+        var jsonData = JSON.stringify(jsonObject);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", endpoint, true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); // Set appropriate header
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById(formId).reset(); // Reset the form
+                document.getElementById(dataTableId).innerHTML = xhr.responseText; // Update the table
+                showSuccessMessage();
+            }
+        };
+        xhr.send(jsonData);
+    }
+
+    function viewRecords(endpoint, dataTableId) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", endpoint, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById(dataTableId).innerHTML = xhr.responseText; // Display records in the table
+            }
+        };
+        xhr.send();
+    }
+
+    function searchTable(tableId, inputId) {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById(inputId);
+        filter = input.value.toUpperCase();
+        table = document.getElementById(tableId);
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0]; // Search only in the first column (index 0)
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function showSuccessMessage() {
+        var successMsg = document.createElement('div');
+        successMsg.classList.add('success-msg');
+        successMsg.innerHTML = '<p>Submission Successful!</p>';
+        document.body.appendChild(successMsg);
+        setTimeout(function() {
+            successMsg.style.display = 'none';
+        }, 3000); // Hide after 3 seconds
+    }
+</script>
+</body>
+</html>
