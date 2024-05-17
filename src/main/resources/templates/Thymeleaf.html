@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,12 +58,8 @@
             margin-top: 20px;
         }
 
-        .success-msg {
-            text-align: center;
-            margin-top: 20px;
-            background-color: #dff0d8; /* Light green background color */
-            padding: 10px;
-            border-radius: 5px;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -72,9 +68,8 @@
 
 <!-- Animals Table -->
 <h2>Animal Records</h2>
-<form id="animalForm" action="http://localhost:8080/api/v1/animals/save" method="post" onsubmit="submitForm(event, 'animalForm', 'http://localhost:8080/api/v1/animals/save', 'animalTable', 'animalDataTable')">
+<form id="animalForm" action="/api/v1/animals/save" method="post" onsubmit="submitForm(event, 'animalForm', '/api/v1/animals/save', 'animalTable', 'animalDataTable')">
     <input type="text" id="AnimalsSearch" onkeyup="searchTable('animalTable', 'AnimalsSearch')" placeholder="Search for Animal...">
-
     <table id="animalTable">
         <tr>
             <th>Identification</th>
@@ -85,6 +80,11 @@
             <th>Breed</th>
             <th>Health</th>
             <th>Feeding</th>
+            <th>Feed Rationing <select name="feedingMethod" id="feedingMethod" onchange="togglePearsonSquareForm()"> <!-- Dropdown for feeding methods -->
+                <option value=""> Method</option>
+                <option value="pearsonSquare">Pearson Square Method</option>
+                <
+            </select> </th> <!-- Updated column name -->
             <th>Production</th>
             <th>Movements</th>
             <th>Behavior</th>
@@ -98,7 +98,8 @@
             <td><input type="date" name="inseminationDate"></td>
             <td><input type="text" name="animalBreeding"></td>
             <td><input type="text" name="animalHealth"></td>
-            <td><input type="text" name="animalFeeding"></td>
+            <td><input type="text" name="Feeding"></td>
+            <td><input type="text" name="FeedRationing"></td>
             <td><input type="text" name="animalProduction"></td>
             <td><input type="text" name="animalMovements"></td>
             <td><input type="text" name="animalBehavior"></td>
@@ -107,15 +108,33 @@
     </table>
     <button type="button" onclick="addRow('animalTable')">Add Row</button>
     <button type="submit" class="submit-btn">Submit</button>
-    <button type="button" onclick="viewRecords('http://localhost:8080/api/v1/animals/all', 'animalDataTable')">View My Records</button>
+    <button type="button" onclick="viewRecords('/api/v1/animals', 'animalDataTable')">View My Records</button>
 </form>
 <div id="animalDataTable" class="data-table"></div>
+
+<!-- Feed Formulation Section -->
+<div id="pearsonSquareFormContainer" class="hidden">
+    <h2>Feed Formulation - Pearson Square Method</h2>
+    <form id="pearsonSquareForm" onsubmit="calculatePearsonSquare(event)">
+        <label for="desiredNutrient">Desired Nutrient Content (%):</label>
+        <input type="number" id="desiredNutrient" name="desiredNutrient" step="0.01" required>
+
+        <label for="ingredient1">Ingredient 1 Content (%):</label>
+        <input type="number" id="ingredient1" name="ingredient1" step="0.01" required>
+
+        <label for="ingredient2">Ingredient 2 Content (%):</label>
+        <input type="number" id="ingredient2" name="ingredient2" step="0.01" required>
+
+        <button type="submit" class="submit-btn">Calculate</button>
+    </form>
+
+    <div id="pearsonSquareResult" class="data-table"></div>
+</div>
 
 <!-- Crops Table -->
 <h2>Crop Records</h2>
 <form id="cropForm" action="/api/v1/crops/save" method="post" onsubmit="submitForm(event, 'cropForm', '/api/v1/crops/save', 'cropTable', 'cropDataTable')">
     <input type="text" id="CropsSearch" onkeyup="searchTable('cropTable', 'CropsSearch')" placeholder="Search for Crops...">
-
     <table id="cropTable">
         <tr>
             <th>Variety</th>
@@ -152,7 +171,6 @@
 <h2>Inventory Records</h2>
 <form id="inventoryForm" action="/api/v1/inventory/save" method="post" onsubmit="submitForm(event, 'inventoryForm', '/api/v1/inventory/save', 'inventoryTable', 'inventoryDataTable')">
     <input type="text" id="InventorySearch" onkeyup="searchTable('inventoryTable', 'InventorySearch')" placeholder="Search for Inventory...">
-
     <table id="inventoryTable">
         <tr>
             <th>Item Description</th>
@@ -174,7 +192,7 @@
             <td><input type="number" name="itemReorderingPoint"></td>
             <td><input type="number" name="itemInventoryValue"></td>
             <td><input type="date" name="purchasedDate"></td>
-            <td><input type="date" name="itemDate"></td>
+            <td><input type="date" name="item Date"></td>
         </tr>
     </table>
     <button type="button" onclick="addRow('inventoryTable')">Add Row</button>
@@ -183,7 +201,7 @@
 </form>
 <div id="inventoryDataTable" class="data-table"></div>
 
-<!-- JavaScript to handle form submission, view records, and display data -->
+<!-- JavaScript to handle form submission, view records, display data, and toggle Pearson Square form -->
 <script>
     function addRow(tableId) {
         var table = document.getElementById(tableId);
@@ -201,25 +219,15 @@
     function submitForm(event, formId, endpoint, tableId, dataTableId) {
         event.preventDefault();
         var formData = new FormData(document.getElementById(formId));
-
-        // Convert formData to JSON
-        var jsonObject = {};
-        formData.forEach(function(value, key){
-            jsonObject[key] = value;
-        });
-        var jsonData = JSON.stringify(jsonObject);
-
         var xhr = new XMLHttpRequest();
         xhr.open("POST", endpoint, true);
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); // Set appropriate header
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                document.getElementById(formId).reset(); // Reset the form
-                document.getElementById(dataTableId).innerHTML = xhr.responseText; // Update the table
-                showSuccessMessage();
+                document.getElementById(formId).reset();
+                document.getElementById(dataTableId).innerHTML = xhr.responseText;
             }
         };
-        xhr.send(jsonData);
+        xhr.send(formData);
     }
 
     function viewRecords(endpoint, dataTableId) {
@@ -227,7 +235,7 @@
         xhr.open("GET", endpoint, true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                document.getElementById(dataTableId).innerHTML = xhr.responseText; // Display records in the table
+                document.getElementById(dataTableId).innerHTML = xhr.responseText;
             }
         };
         xhr.send();
@@ -240,7 +248,7 @@
         table = document.getElementById(tableId);
         tr = table.getElementsByTagName("tr");
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0]; // Search only in the first column (index 0)
+            td = tr[i].getElementsByTagName("td")[0];
             if (td) {
                 txtValue = td.textContent || td.innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -252,15 +260,55 @@
         }
     }
 
-    function showSuccessMessage() {
-        var successMsg = document.createElement('div');
-        successMsg.classList.add('success-msg');
-        successMsg.innerHTML = '<p>Submission Successful!</p>';
-        document.body.appendChild(successMsg);
-        setTimeout(function() {
-            successMsg.style.display = 'none';
-        }, 3000); // Hide after 3 seconds
+    function togglePearsonSquareForm() {
+    var feedingMethod = document.getElementById("feedingMethod").value;
+    var formContainer = document.getElementById("pearsonSquareFormContainer");
+    if (feedingMethod === "pearsonSquare") {
+        formContainer.classList.remove("hidden");
+    } else {
+        formContainer.classList.add("hidden");
     }
+}
+
+function calculatePearsonSquare(event) {
+    event.preventDefault();
+    var desiredNutrient = parseFloat(document.getElementById('desiredNutrient').value);
+    var ingredient1 = parseFloat(document.getElementById('ingredient1').value);
+    var ingredient2 = parseFloat(document.getElementById('ingredient2').value);
+
+    if (desiredNutrient < Math.min(ingredient1, ingredient2) || desiredNutrient > Math.max(ingredient1, ingredient2)) {
+        alert("Desired nutrient content must be between the contents of the two ingredients.");
+        return;
+    }
+
+    var part1 = desiredNutrient - ingredient2;
+    var part2 = ingredient1 - desiredNutrient;
+    var totalParts = part1 + part2;
+
+    var percentageIngredient1 = (part1 / totalParts) * 100;
+    var percentageIngredient2 = (part2 / totalParts) * 100;
+
+    document.getElementById('pearsonSquareResult').innerHTML = `
+        <h3>Feed Formulation Result</h3>
+        <p>Ingredient 1: ${percentageIngredient1.toFixed(2)}%</p>
+        <p>Ingredient 2: ${percentageIngredient2.toFixed(2)}%</p>
+        <button onclick="printResults()">Print Results</button>
+    `;
+}
+
+function printResults() {
+    var resultDiv = document.getElementById('pearsonSquareResult');
+    var printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title>Feed Formulation Results</title></head><body>');
+    printWindow.document.write('<h1>Feed Formulation Results</h1>');
+    printWindow.document.write(resultDiv.innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
+
 </script>
 </body>
 </html>
+
