@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farm Management System</title>
+    <title>Farm Records Management System</title>
     <style>
         body {
             background-color: #c0e4b6; /* Green background color */
@@ -68,9 +68,11 @@
 
 <!-- Animals Table -->
 <h2>Animal Records</h2>
-<form id="animalForm" action="/api/v1/animals/save" method="post" onsubmit="submitForm(event, 'animalForm', '/api/v1/animals/save', 'animalTable', 'animalDataTable')">
-    <input type="text" id="AnimalsSearch" onkeyup="searchTable('animalTable', 'AnimalsSearch')" placeholder="Search for Animal...">
-    <table id="animalTable">
+<form id="animalForm" onsubmit="submitForm(event, 'animalForm', '/api/v1/animals/save', 'animalDataTable', 'animalTable')">
+
+    <label for="AnimalsSearch">Search for Animal:</label>
+    <input type="text" id="AnimalsSearch" onkeyup="searchTable('animalDataTable', 'AnimalsSearch')" placeholder="Search for Animal...">
+    <table id="animalDataTable">
         <tr>
             <th>Identification</th>
             <th>Animal Sex</th>
@@ -80,11 +82,12 @@
             <th>Breed</th>
             <th>Health</th>
             <th>Feeding</th>
-            <th>Feed Rationing <select name="feedingMethod" id="feedingMethod" onchange="togglePearsonSquareForm()"> <!-- Dropdown for feeding methods -->
-                <option value=""> Method</option>
-                <option value="pearsonSquare">Pearson Square Method</option>
-                <
-            </select> </th> <!-- Updated column name -->
+            <th>Feed Rationing
+                <select name="feedingMethod" id="feedingMethod" onchange="togglePearsonSquareForm()"> <!-- Dropdown for feeding methods -->
+                    <option value="">Method</option>
+                    <option value="pearsonSquare">Pearson Square Method</option>
+                </select>
+            </th> <!-- Updated column name -->
             <th>Production</th>
             <th>Movements</th>
             <th>Behavior</th>
@@ -106,11 +109,11 @@
             <td><input type="date" name="animalDate"></td>
         </tr>
     </table>
-    <button type="button" onclick="addRow('animalTable')">Add Row</button>
+    <button type="button" onclick="addRow('animalDataTable')">Add Row</button>
     <button type="submit" class="submit-btn">Submit</button>
-    <button type="button" onclick="viewRecords('/api/v1/animals', 'animalDataTable')">View My Records</button>
+    <button type="button" onclick="viewRecords('/api/v1/animals', 'animalDataTable')">View All Animals</button>
 </form>
-<div id="animalDataTable" class="data-table"></div>
+<div id="animalTable" class="data-table"></div>
 
 <!-- Feed Formulation Section -->
 <div id="pearsonSquareFormContainer" class="hidden">
@@ -133,9 +136,10 @@
 
 <!-- Crops Table -->
 <h2>Crop Records</h2>
-<form id="cropForm" action="/api/v1/crops/save" method="post" onsubmit="submitForm(event, 'cropForm', '/api/v1/crops/save', 'cropTable', 'cropDataTable')">
-    <input type="text" id="CropsSearch" onkeyup="searchTable('cropTable', 'CropsSearch')" placeholder="Search for Crops...">
-    <table id="cropTable">
+<form id="cropForm" onsubmit="submitForm(event, 'cropForm', '/api/v1/crops/save', 'cropDataTable', 'cropTable')">
+    <label for="CropsSearch">Search for Crops:</label>
+    <input type="text" id="CropsSearch" onkeyup="searchTable('cropDataTable', 'CropsSearch')" placeholder="Search for Crops...">
+    <table id="cropDataTable">
         <tr>
             <th>Variety</th>
             <th>Planting Date</th>
@@ -161,154 +165,281 @@
             <td><input type="date" name="cropDate"></td>
         </tr>
     </table>
-    <button type="button" onclick="addRow('cropTable')">Add Row</button>
+    <button type="button" onclick="addRow('cropDataTable')">Add Row</button>
     <button type="submit" class="submit-btn">Submit</button>
     <button type="button" onclick="viewRecords('/api/v1/crops', 'cropDataTable')">View My Records</button>
 </form>
-<div id="cropDataTable" class="data-table"></div>
+<div id="cropTable" class="data-table"></div>
 
 <!-- Inventory Table -->
 <h2>Inventory Records</h2>
-<form id="inventoryForm" action="/api/v1/inventory/save" method="post" onsubmit="submitForm(event, 'inventoryForm', '/api/v1/inventory/save', 'inventoryTable', 'inventoryDataTable')">
-    <input type="text" id="InventorySearch" onkeyup="searchTable('inventoryTable', 'InventorySearch')" placeholder="Search for Inventory...">
-    <table id="inventoryTable">
+<form id="inventoryForm" onsubmit="submitForm(event, 'inventoryForm', '/api/v1/inventory/save', 'inventoryDataTable', 'inventoryTable')">
+
+    <label for="InventorySearch">Search for Inventory:</label>
+    <input type="text" id="InventorySearch" onkeyup="searchTable('inventoryDataTable', 'InventorySearch')" placeholder="Search for Inventory...">
+    <table id="inventoryDataTable">
         <tr>
-            <th>Item Description</th>
+            <th>Item Name</th>
             <th>Quantity</th>
-            <th>Unit Cost</th>
+            <th>Category</th>
+            <th>Purchase Date</th>
             <th>Supplier</th>
-            <th>Usage</th>
-            <th>Reordering Point</th>
-            <th>Inventory Value</th>
-            <th>Purchased Date</th>
+            <th>Cost</th>
             <th>Date</th>
         </tr>
         <tr>
-            <td><input type="text" name="itemDescription"></td>
-            <td><input type="number" name="itemQuantity"></td>
-            <td><input type="number" name="itemUnitCost"></td>
-            <td><input type="text" name="itemSupplier"></td>
-            <td><input type="text" name="itemUsage"></td>
-            <td><input type="number" name="itemReorderingPoint"></td>
-            <td><input type="number" name="itemInventoryValue"></td>
-            <td><input type="date" name="purchasedDate"></td>
-            <td><input type="date" name="item Date"></td>
+            <td><input type="text" name="itemName"></td>
+            <td><input type="number" name="quantity"></td>
+            <td><input type="text" name="category"></td>
+            <td><input type="date" name="purchaseDate"></td>
+            <td><input type="text" name="supplier"></td>
+            <td><input type="number" name="cost" step="0.01"></td>
+            <td><input type="date" name="date"></td>
         </tr>
     </table>
-    <button type="button" onclick="addRow('inventoryTable')">Add Row</button>
+    <button type="button" onclick="addRow('inventoryDataTable')">Add Row</button>
     <button type="submit" class="submit-btn">Submit</button>
-    <button type="button" onclick="viewRecords('/api/v1/inventory', 'inventoryDataTable')">View My Records</button>
+    <button type="button" onclick="viewRecords('/api/v1/inventory', 'inventoryDataTable')">View All Inventory</button>
 </form>
-<div id="inventoryDataTable" class="data-table"></div>
+<div id="inventoryTable" class="data-table"></div>
 
-<!-- JavaScript to handle form submission, view records, display data, and toggle Pearson Square form -->
+
+<!-- Sales Form -->
+<h2>Sales Records</h2>
+<form id="salesForm" onsubmit="event.preventDefault();">
+    <label for="saleType">Sale Type:</label>
+    <select id="saleType" name="saleType" onchange="toggleSalesForm()" required>
+        <option value="">Select Type</option>
+        <option value="animals">Animals</option>
+        <option value="crops">Crops</option>
+    </select>
+</form>
+
+<!-- Crop Sales Record Form -->
+<h2 id="cropSalesRecordHeader" class="hidden">Crop Sales Record</h2>
+<form id="cropSalesForm" onsubmit="addCropSale(event)" class="hidden">
+    <label for="cropSaleDate">Sale Date:</label>
+    <input type="date" id="cropSaleDate" name="cropSaleDate" required><br>
+
+    <label for="cropType">Crop Type:</label>
+    <input type="text" id="cropType" name="cropType" required><br>
+
+    <label for="cropQuantity">Quantity Sold:</label>
+    <input type="number" id="cropQuantity" name="cropQuantity" required><br>
+
+    <label for="cropPricePerUnit">Price Per Unit ($):</label>
+    <input type="number" id="cropPricePerUnit" name="cropPricePerUnit" step="0.01" required><br>
+
+    <label for="cropBuyer">Buyer Details:</label>
+    <input type="text" id="cropBuyer" name="cropBuyer" required><br>
+
+    <label for="cropNotes">Notes:</label>
+    <textarea id="cropNotes" name="cropNotes"></textarea><br>
+
+    <button type="submit" class="submit-btn">Add Crop Sale</button>
+</form>
+
+<div id="cropSalesTable" class="data-table hidden"></div>
+
+<!-- Animal Sales Record Form -->
+<h2 id="animalSalesRecordHeader" class="hidden">Animal Sales Record</h2>
+<form id="animalSalesForm" onsubmit="addAnimalSale(event)" class="hidden">
+    <label for="animalSaleDate">Sale Date:</label>
+    <input type="date" id="animalSaleDate" name="animalSaleDate" required><br>
+
+    <label for="animalType">Animal Type:</label>
+    <input type="text" id="animalType" name="animalType" required><br>
+
+    <label for="animalQuantity">Quantity Sold:</label>
+    <input type="number" id="animalQuantity" name="animalQuantity" required><br>
+
+    <label for="animalPricePerUnit">Price Per Unit ($):</label>
+    <input type="number" id="animalPricePerUnit" name="animalPricePerUnit" step="0.01" required><br>
+
+    <label for="animalBuyer">Buyer Details:</label>
+    <input type="text" id="animalBuyer" name="animalBuyer" required><br>
+
+    <label for="animalNotes">Notes:</label>
+    <textarea id="animalNotes" name="animalNotes"></textarea><br>
+
+    <button type="submit" class="submit-btn">Add Animal Sale</button>
+</form>
+
+<div id="animalSalesTable" class="data-table hidden"></div>
+
 <script>
+    // Function to add a new row to a table
     function addRow(tableId) {
         var table = document.getElementById(tableId);
-        var newRow = table.insertRow(table.rows.length);
-        var cellCount = table.rows[0].cells.length;
-        for (var i = 0; i < cellCount; i++) {
-            var newCell = newRow.insertCell(i);
-            var input = document.createElement("input");
-            input.type = "text";
-            input.name = tableId.replace("Table", "") + "[]";
-            newCell.appendChild(input);
+        var row = table.insertRow();
+        var cells = table.rows[1].cells.length;
+
+        for (var i = 0; i < cells; i++) {
+            var cell = row.insertCell(i);
+            var input = document.createElement('input');
+            input.type = table.rows[1].cells[i].children[0].type;
+            input.name = table.rows[1].cells[i].children[0].name;
+            input.placeholder = table.rows[1].cells[i].children[0].placeholder;
+            cell.appendChild(input);
         }
     }
 
-    function submitForm(event, formId, endpoint, tableId, dataTableId) {
-        event.preventDefault();
-        var formData = new FormData(document.getElementById(formId));
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", endpoint, true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                document.getElementById(formId).reset();
-                document.getElementById(dataTableId).innerHTML = xhr.responseText;
-            }
-        };
-        xhr.send(formData);
-    }
-
-    function viewRecords(endpoint, dataTableId) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", endpoint, true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                document.getElementById(dataTableId).innerHTML = xhr.responseText;
-            }
-        };
-        xhr.send();
-    }
-
-    function searchTable(tableId, inputId) {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById(inputId);
+    // Function to search and filter table rows based on input
+    function searchTable(tableId, searchInputId) {
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById(searchInputId);
         filter = input.value.toUpperCase();
         table = document.getElementById(tableId);
         tr = table.getElementsByTagName("tr");
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0];
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+
+        for (i = 1; i < tr.length; i++) {
+            tr[i].style.display = "none";
+
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        break;
+                    }
                 }
             }
         }
     }
 
+    // Function to submit form data and save it to the server
+    function submitForm(event, formId, url, dataTableId, dataContainerId) {
+        event.preventDefault();
+        var form = document.getElementById(formId);
+        var data = new FormData(form);
+
+        var table = document.getElementById(dataTableId);
+        var rows = table.getElementsByTagName('tr');
+        for (var i = 1; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName('td');
+            for (var j = 0; j < cells.length; j++) {
+                data.append(cells[j].children[0].name, cells[j].children[0].value);
+            }
+        }
+
+        fetch(url, {
+            method: 'POST',
+            body: data
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById(dataContainerId).innerHTML = 'Data saved successfully';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Function to view records from the server and display them in the table
+    function viewRecords(url, dataTableId) {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var table = document.getElementById(dataTableId);
+                var rows = table.getElementsByTagName('tr');
+
+                while (rows.length > 1) {
+                    table.deleteRow(1);
+                }
+
+                data.forEach(record => {
+                    var row = table.insertRow();
+                    for (var key in record) {
+                        var cell = row.insertCell();
+                        cell.textContent = record[key];
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Function to toggle between animal and crop sales forms
+    function toggleSalesForm() {
+        var saleType = document.getElementById('saleType').value;
+        document.getElementById('cropSalesForm').classList.add('hidden');
+        document.getElementById('animalSalesForm').classList.add('hidden');
+        document.getElementById('cropSalesTable').classList.add('hidden');
+        document.getElementById('animalSalesTable').classList.add('hidden');
+        document.getElementById('cropSalesRecordHeader').classList.add('hidden');
+        document.getElementById('animalSalesRecordHeader').classList.add('hidden');
+
+        if (saleType === 'crops') {
+            document.getElementById('cropSalesForm').classList.remove('hidden');
+            document.getElementById('cropSalesTable').classList.remove('hidden');
+            document.getElementById('cropSalesRecordHeader').classList.remove('hidden');
+        } else if (saleType === 'animals') {
+            document.getElementById('animalSalesForm').classList.remove('hidden');
+            document.getElementById('animalSalesTable').classList.remove('hidden');
+            document.getElementById('animalSalesRecordHeader').classList.remove('hidden');
+        }
+    }
+
+    // Function to add crop sale record to the table
+    function addCropSale(event) {
+        event.preventDefault();
+        var form = document.getElementById('cropSalesForm');
+        var data = new FormData(form);
+
+        var table = document.getElementById('cropSalesTable');
+        var row = table.insertRow();
+
+        for (var pair of data.entries()) {
+            var cell = row.insertCell();
+            cell.textContent = pair[1];
+        }
+    }
+
+    // Function to add animal sale record to the table
+    function addAnimalSale(event) {
+        event.preventDefault();
+        var form = document.getElementById('animalSalesForm');
+        var data = new FormData(form);
+
+        var table = document.getElementById('animalSalesTable');
+        var row = table.insertRow();
+
+        for (var pair of data.entries()) {
+            var cell = row.insertCell();
+            cell.textContent = pair[1];
+        }
+    }
+
+    // Function to toggle visibility of Pearson Square Form
     function togglePearsonSquareForm() {
-    var feedingMethod = document.getElementById("feedingMethod").value;
-    var formContainer = document.getElementById("pearsonSquareFormContainer");
-    if (feedingMethod === "pearsonSquare") {
-        formContainer.classList.remove("hidden");
-    } else {
-        formContainer.classList.add("hidden");
-    }
-}
-
-function calculatePearsonSquare(event) {
-    event.preventDefault();
-    var desiredNutrient = parseFloat(document.getElementById('desiredNutrient').value);
-    var ingredient1 = parseFloat(document.getElementById('ingredient1').value);
-    var ingredient2 = parseFloat(document.getElementById('ingredient2').value);
-
-    if (desiredNutrient < Math.min(ingredient1, ingredient2) || desiredNutrient > Math.max(ingredient1, ingredient2)) {
-        alert("Desired nutrient content must be between the contents of the two ingredients.");
-        return;
+        var method = document.getElementById('feedingMethod').value;
+        var formContainer = document.getElementById('pearsonSquareFormContainer');
+        if (method === 'pearsonSquare') {
+            formContainer.classList.remove('hidden');
+        } else {
+            formContainer.classList.add('hidden');
+        }
     }
 
-    var part1 = desiredNutrient - ingredient2;
-    var part2 = ingredient1 - desiredNutrient;
-    var totalParts = part1 + part2;
+    // Function to calculate Pearson Square for feed formulation
+    function calculatePearsonSquare(event) {
+        event.preventDefault();
+        var desired = parseFloat(document.getElementById('desiredNutrient').value);
+        var ingredient1 = parseFloat(document.getElementById('ingredient1').value);
+        var ingredient2 = parseFloat(document.getElementById('ingredient2').value);
 
-    var percentageIngredient1 = (part1 / totalParts) * 100;
-    var percentageIngredient2 = (part2 / totalParts) * 100;
+        var part1 = Math.abs(desired - ingredient2);
+        var part2 = Math.abs(ingredient1 - desired);
 
-    document.getElementById('pearsonSquareResult').innerHTML = `
-        <h3>Feed Formulation Result</h3>
-        <p>Ingredient 1: ${percentageIngredient1.toFixed(2)}%</p>
-        <p>Ingredient 2: ${percentageIngredient2.toFixed(2)}%</p>
-        <button onclick="printResults()">Print Results</button>
-    `;
-}
+        var totalParts = part1 + part2;
 
-function printResults() {
-    var resultDiv = document.getElementById('pearsonSquareResult');
-    var printWindow = window.open('', '_blank');
-    printWindow.document.write('<html><head><title>Feed Formulation Results</title></head><body>');
-    printWindow.document.write('<h1>Feed Formulation Results</h1>');
-    printWindow.document.write(resultDiv.innerHTML);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.print();
-}
+        var result1 = (part1 / totalParts) * 100;
+        var result2 = (part2 / totalParts) * 100;
 
-
+        var resultContainer = document.getElementById('pearsonSquareResult');
+        resultContainer.innerHTML = `Ingredient 1: ${result1.toFixed(2)}%, Ingredient 2: ${result2.toFixed(2)}%`;
+    }
 </script>
+
 </body>
 </html>
-

@@ -1,18 +1,20 @@
 package Farm.Management.Animals;
+
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDate;
+
 @Data
 @Entity
 @Table(name = "animals")
-public class Animals {
+public class Animal {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "identification")
-    private String identification;
+    private Long identification;
 
-    @Column(name = "Animal_sex")
+    @Column(name = "Animal_Sex")
     private String animalSex;
 
     @Column(name = "birthday_date")
@@ -24,7 +26,7 @@ public class Animals {
     @Column(name = "insemination_date")
     private LocalDate inseminationDate;
 
-    @Column(name = "breeding")
+    @Column(name = "breed")
     private String animalBreeding;
 
     @Column(name = "health")
@@ -32,6 +34,9 @@ public class Animals {
 
     @Column(name = "feeding")
     private String animalFeeding;
+
+    @Column(name = "Feed_Rationing")
+    private String animalFeedingRationing;
 
     @Column(name = "production")
     private String animalProduction;
@@ -43,8 +48,5 @@ public class Animals {
     private String animalBehavior;
 
     @Column(name = "date")
-    private LocalDate Date;
-
-    // Getters and setters
-
+    private LocalDate date;
 }
